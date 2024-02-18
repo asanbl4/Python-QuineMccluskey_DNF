@@ -47,30 +47,30 @@ def negation(s):
     return ' '.join(arr) + ' '
 
 
-def dnf(n, s):
-    ans, table = '', get_table(n)
-    for i in range(len(s)):
+def dnf(number_of_variables, expression):
+    ans, table = '', get_table(number_of_variables)
+    for i in range(len(expression)):
         # -()
-        if s.find("-(", i, len(s) - 1) != -1:
-            found = s.find("-(", i, len(s) - 1)
+        if expression.find("-(", i, len(expression) - 1) != -1:
+            found = expression.find("-(", i, len(expression) - 1)
             opening_parenthesis, closing_parenthesis = 0, 0
             current_open, current_close = found, 0
-            for j in range(found, len(s)):
-                if s[j] == "(":
+            for j in range(found, len(expression)):
+                if expression[j] == "(":
                     opening_parenthesis += 1
-                elif s[j] == ")":
+                elif expression[j] == ")":
                     current_close = j
                     closing_parenthesis += 1
                 if opening_parenthesis == closing_parenthesis != 0:
                     break
-            s = s[:found] + s[found:].replace("-(", "(", 1)
+            expression = expression[:found] + expression[found:].replace("-(", "(", 1)
             current_close -= 1
-            s = s[:found + 1] + negation(s[current_open + 1:current_close]) + s[current_close:]
+            expression = expression[:found + 1] + negation(expression[current_open + 1:current_close]) + expression[current_close:]
         # arrow
-        if s.find("r", i, len(s) - 1) != -1:
-            found = s.find("r", i)
-            s = s.replace("r", "|", 1)
-            temp = s[:found - 1]
+        if expression.find("r", i, len(expression) - 1) != -1:
+            found = expression.find("r", i)
+            expression = expression.replace("r", "|", 1)
+            temp = expression[:found - 1]
             start, end, opening_parenthesis, closing_parenthesis = 0, 0, 0, 0
             current_open, current_close = 0, 0
             # print(temp)
@@ -85,13 +85,13 @@ def dnf(n, s):
                 if opening_parenthesis == closing_parenthesis != 0:
                     break
             if current_close != 0:
-                s = s[:current_open] + negation(s[current_open: current_close + 1]) + s[current_close + 1:]
+                expression = expression[:current_open] + negation(expression[current_open: current_close + 1]) + expression[current_close + 1:]
             else:
-                s = s[:current_open] + negation(s[current_open:found]) + s[found:]
-    print(f"Our converted function: {s}")
+                expression = expression[:current_open] + negation(expression[current_open:found]) + expression[found:]
+    print(f"Our converted function: {expression}")
     # last step with | and & and paranthesis
     for i in table:
-        temp = s
+        temp = expression
         # replacing letters with 0's and 1's from the truth table
         for j in range(len(i)):
             if j == 0:
@@ -108,13 +108,13 @@ def dnf(n, s):
                 temp = temp.replace("d", str(int(i[j])))
         # checking if the result is 1, then adding it to the final answer
         if eval(temp):
-            if n == 1:
+            if number_of_variables == 1:
                 ans += f' | {"a" if i[0] else "-a"}'
-            elif n == 2:
+            elif number_of_variables == 2:
                 ans += f' | {"a" if i[0] else "-a"}{" & b" if i[1] else " & -b"}'
-            elif n == 3:
+            elif number_of_variables == 3:
                 ans += f' | {"a" if i[0] else "-a"}{" & b" if i[1] else " & -b"}{" & c" if i[2] else " & -c"}'
-            elif n == 4:
+            elif number_of_variables == 4:
                 ans += f' | {"a" if i[0] else "-a"}{" & b" if i[1] else " & -b"}{" & c" if i[2] else " & -c"}{" & d" if i[3] else " & -d"}'
 
     return ans[3:]
@@ -123,6 +123,6 @@ def dnf(n, s):
 if __name__ == '__main__':
     n = int(input("Enter the number of variables: "))
     s = input("Your boolean expression: ")
-    print(dnf(n, s))
+    print(dnf(number_of_variables=n, expression=s))
     # 2
     # (-(a | b) & (a & b))

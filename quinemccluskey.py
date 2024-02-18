@@ -8,8 +8,8 @@ def to_boolean(variables):
     return variables
 
 
-def solve(n, s):
-    variables = to_boolean([i.split(" & ") for i in s.split(" | ")])
+def solve(number_of_variables, dnf):
+    variables = to_boolean([i.split(" & ") for i in dnf.split(" | ")])
     d = {}
     for i in variables:
         temp = d.get(sum(i))
@@ -34,13 +34,13 @@ def solve(n, s):
             for j in range(i + 1, len(next1)):
                 l1, l2 = next1[i], next1[j]
                 equals, add = 0, []
-                for k in range(n):
+                for k in range(number_of_variables):
                     if l1[k] == l2[k]:
                         add.append(l1[k])
                         equals += 1
                     else:
                         add.append("_")
-                if equals == n - 1:
+                if equals == number_of_variables - 1:
                     if l1 in flags.get(False):
                         flags[True].append(l1)
                         flags[False].remove(l1)
@@ -59,7 +59,7 @@ def solve(n, s):
     for i in ans:
         for j in i:
             t = []
-            for k in range(n):
+            for k in range(number_of_variables):
                 if k == 0:
                     if j[k] == 1:
                         t.append("a")
